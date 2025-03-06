@@ -25,16 +25,14 @@ services:
     command: "npm start"
   backend:
     image: todo-app/backend
+    ports:
+      - "3001:3001"
     build: ./backend
     volumes:
       - ./backend/:/usr/src/app
-    expose:
-      - "3001"
-    ports:
-      - "8001:3001"
-    command: "python src/server.py"
+    command: "uvicorn src.server:app --host 0.0.0.0 --port 3001"
     environment:
-      - DEBUG=true
+    - PYTHONPATH=/usr/src/app/src
     env_file:
       - path: ./.env
         required: true
