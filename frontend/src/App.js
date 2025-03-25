@@ -13,7 +13,7 @@ function App() {
   }, []);
 
   async function reloadData() {
-    const response = await axios.get("/api/lists");
+    const response = await get("https://farm-api-production.up.railway.app/api/lists");
     const data = await response.data;
     setListSummaries(data);
   }
@@ -24,7 +24,7 @@ function App() {
         name: newName,
       };
 
-      await axios.post(`/api/lists`, newListData);
+      await axios.post(`https://farm-api-production.up.railway.app/api/lists`, newListData);
       reloadData().catch(console.error);
     };
     updateData();
@@ -32,7 +32,7 @@ function App() {
 
   function handleDeleteToDoList(id) {
     const updateData = async () => {
-      await axios.delete(`/api/lists/${id}`);
+      await axios.delete(`https://farm-api-production.up.railway.app/api/lists/${id}`);
       reloadData().catch(console.error);
     };
     updateData();

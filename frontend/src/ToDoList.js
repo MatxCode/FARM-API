@@ -9,7 +9,7 @@ function ToDoList({ listId, handleBackButton }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get(`/api/lists/${listId}`);
+      const response = await axios.get(`https://farm-api-production.up.railway.app/api/lists/${listId}`);
       const newData = await response.data;
       setListData(newData);
     };
@@ -18,7 +18,7 @@ function ToDoList({ listId, handleBackButton }) {
 
   function handleCreateItem(label) {
     const updateData = async () => {
-      const response = await axios.post(`/api/lists/${listData.id}/items/`, {
+      const response = await axios.post(`https://farm-api-production.up.railway.app/api/lists/${listData.id}/items/`, {
         label: label,
       });
       setListData(await response.data);
@@ -29,7 +29,7 @@ function ToDoList({ listId, handleBackButton }) {
   function handleDeleteItem(id) {
     const updateData = async () => {
       const response = await axios.delete(
-        `/api/lists/${listData.id}/items/${id}`
+        `https://farm-api-production.up.railway.app/api/lists/${listData.id}/items/${id}`
       );
       setListData(await response.data);
     };
@@ -39,7 +39,7 @@ function ToDoList({ listId, handleBackButton }) {
   function handleCheckToggle(itemId, newState) {
     const updateData = async () => {
       const response = await axios.patch(
-        `/api/lists/${listData.id}/checked_state`,
+        `https://farm-api-production.up.railway.app/api/lists/${listData.id}/checked_state`,
         {
           item_id: itemId,
           checked_state: newState,
