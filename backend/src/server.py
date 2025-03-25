@@ -7,14 +7,8 @@ from bson import ObjectId
 from fastapi import FastAPI, status
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
-from pymongo.server_api import ServerApi
 import uvicorn
 
-client_options = {
-    "serverSelectionTimeoutMS": 5000,  # Réduire le timeout
-    "connectTimeoutMS": 5000,
-    "serverApi": ServerApi('1')  # Version recommandée de l'API
-}
 
 from src.dal import ToDoDAL, ListSummary, ToDoList
 
@@ -26,7 +20,7 @@ DEBUG = os.environ.get("DEBUG", "").strip().lower() in {"1", "true", "on", "yes"
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup:
-    client = AsyncIOMotorClient(MONGODB_URI, **client_options)
+    client = AsyncIOMotorClient(MONGODB_URI)
     database = client.get_default_database()
 
     # Ensure the database is available:
