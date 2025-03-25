@@ -55,11 +55,11 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "https://farm-api.vercel.app/" 
+        "https://farm-api-production.up.railway.app"
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH"],  # Explicitement listés
-    allow_headers=["Content-Type", "Authorization"],  # Seuls les headers nécessaires
-    expose_headers=["Content-Length", "X-Custom-Header"]
+    allow_headers=["*"],  # Seuls les headers nécessaires
 )
 
 
