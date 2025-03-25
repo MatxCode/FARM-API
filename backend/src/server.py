@@ -58,7 +58,7 @@ app.add_middleware(
         "https://farm-api-production.up.railway.app"
     ],
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH"],  # Explicitement listés
+    allow_methods=["*"],  # Explicitement listés
     allow_headers=["*"],  # Seuls les headers nécessaires
 )
 
