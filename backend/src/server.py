@@ -28,12 +28,14 @@ async def lifespan(app: FastAPI):
     client = AsyncIOMotorClient(
         MONGODB_URI,
         tls=True,
-        tlsCAFile=certifi.where(),  # Certificats valides uniquement
-        tlsAllowInvalidCertificates=False,  # À mettre à False en prod
-        serverSelectionTimeoutMS=10000,
+        tlsAllowInvalidCertificates=False,  # Temporairement pour tests
+        tlsCAFile=certifi.where(),
+        serverSelectionTimeoutMS=30000,  # 30 secondes
+        connectTimeoutMS=30000,
+        socketTimeoutMS=30000,
         retryWrites=True,
-        appname="todo-app"  # Identification de l'application
-)
+        retryReads=True
+    )
     
     try:
         # Test de connexion plus robuste
@@ -52,14 +54,10 @@ app = FastAPI(lifespan=lifespan, debug=DEBUG)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "https://farm-api.vercel.app/" 
-        "https://farm-api-production.up.railway.app"
-    ],
+    allow_origins=["*"],  # Pour le dev, remplacez par vos URLs en prod
     allow_credentials=True,
-    allow_methods=["*"],  # Explicitement listés
-    allow_headers=["*"],  # Seuls les headers nécessaires
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
