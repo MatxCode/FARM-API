@@ -122,7 +122,7 @@ async def get_dummy() -> DummyResponse:
 
 def main(argv=sys.argv[1:]):
     try:
-        uvicorn.run("server:app", host="0.0.0.0", port=3001, reload=DEBUG)
+        uvicorn.run("server:app", host="0.0.0.0", port=8000, reload=DEBUG)
     except KeyboardInterrupt:
         pass
 
