@@ -20,7 +20,7 @@ DEBUG = os.environ.get("DEBUG", "").strip().lower() in {"1", "true", "on", "yes"
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup:
-    client = AsyncIOMotorClient(MONGODB_URI)
+    client = AsyncIOMotorClient(MONGODB_URI, tls=True, tlsAllowInvalidCertificates=False)
     database = client.get_default_database()
 
     # Ensure the database is available:
