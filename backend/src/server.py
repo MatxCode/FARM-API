@@ -28,7 +28,7 @@ async def lifespan(app: FastAPI):
     client = AsyncIOMotorClient(
         MONGODB_URI,
         tls=True,
-        tlsAllowInvalidCertificates=False,  # Temporairement pour tests
+        tlsAllowInvalidCertificates=False, 
         tlsCAFile=certifi.where(),
         serverSelectionTimeoutMS=30000,  # 30 secondes
         connectTimeoutMS=30000,
@@ -54,9 +54,11 @@ app = FastAPI(lifespan=lifespan, debug=DEBUG)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Pour le dev, remplacez par vos URLs en prod
+    allow_origins=[
+        "https://farm-api.vercel.app/" 
+    ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH"],
     allow_headers=["*"],
 )
 
