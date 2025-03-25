@@ -1,6 +1,12 @@
-FROM python:3.10
+FROM python:3.10-slim-bullseye 
 
 WORKDIR /usr/src/app
+
+# Installer les dépendances système en premier
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt ./
 
@@ -13,8 +19,3 @@ ENV PYTHONPATH="${PYTHONPATH}:/usr/src/app"
 EXPOSE 8000
 
 CMD ["uvicorn", "src.server:app", "--host", "0.0.0.0", "--port", "8000"]
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates \
-    libssl-dev \
-    && rm -rf /var/lib/apt/lists/*

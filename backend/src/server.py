@@ -1,7 +1,10 @@
+import asyncio
 from contextlib import asynccontextmanager
 from datetime import datetime
 import os
 import sys
+
+import certifi
 
 from bson import ObjectId
 from fastapi import FastAPI, status
@@ -21,26 +24,34 @@ DEBUG = os.environ.get("DEBUG", "").strip().lower() in {"1", "true", "on", "yes"
 async def lifespan(app: FastAPI):
     # Startup:
     client = AsyncIOMotorClient(
-            MONGODB_URI, 
-            tls=True, 
-            tlsAllowInvalidCertificates=False,  # Assure que les certificats sont validés
-            serverSelectionTimeoutMS=5000  # Timeout plus court pour la sélection du serveur
-        )
-    database = client.get_default_database()
-
-    # Ensure the database is available:
-    pong = await database.command("ping")
-    if int(pong["ok"]) != 1:
-        raise Exception("Cluster connection is not okay!")
-
-    todo_lists = database.get_collection(COLLECTION_NAME)
-    app.todo_dal = ToDoDAL(todo_lists)
-
-    # Yield back to FastAPI Application:
-    yield
-
-    # Shutdown:
-    client.close()
+        MONGODB_URI,
+        tls=True,
+        tlsAllowInvalidCertificates=False,
+        tlsCAFile=certifi.where(),  # Utilise les certificats de certifi
+        serverSelectionTimeoutMS=10000,  # Timeout un peu plus long
+        connectTimeoutMS=10000,
+        socketTimeoutMS=20000,
+        retryWrites=True,
+        retryReads=True
+    )
+    
+    try:
+        database = client.get_default_database()
+        # Test de connexion avec un timeout explicite
+        pong = await asyncio.wait_for(database.command("ping"), timeout=5)
+        if int(pong["ok"]) != 1:
+            raise Exception("Cluster connection is not okay!")
+            
+        todo_lists = database.get_collection(COLLECTION_NAME)
+        app.todo_dal = ToDoDAL(todo_lists)
+        
+        yield
+        
+    except Exception as e:
+        print(f"Database connection error: {str(e)}")
+        raise
+    finally:
+        client.close()
 
 
 app = FastAPI(lifespan=lifespan, debug=DEBUG)
