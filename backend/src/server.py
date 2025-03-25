@@ -8,6 +8,7 @@ import certifi
 
 from bson import ObjectId
 from fastapi import FastAPI, status
+from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 import uvicorn
@@ -50,6 +51,19 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan, debug=DEBUG)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",  # Dev local
+        "https://votre-frontend.vercel.app",  # Votre frontend en prod
+        "https://farm-api-production.up.railway.app"  # Autorise aussi le backend lui-même
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],  # Ou spécifiez ["GET", "POST", "PUT", "DELETE"]
+    allow_headers=["*"],
+    expose_headers=["*"]  # Important pour certains cas
+)
 
 
 @app.get("/api/lists")
