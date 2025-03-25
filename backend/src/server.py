@@ -9,7 +9,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 import uvicorn
 
-from dal import ToDoDAL, ListSummary, ToDoList
+from src.dal import ToDoDAL, ListSummary, ToDoList
 
 COLLECTION_NAME = "todo_lists"
 MONGODB_URI = os.environ["MONGODB_URI"]
