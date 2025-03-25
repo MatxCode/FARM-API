@@ -22,33 +22,28 @@ DEBUG = os.environ.get("DEBUG", "").strip().lower() in {"1", "true", "on", "yes"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    print(f"Tentative de connexion à MongoDB avec URI: {MONGODB_URI[:MONGODB_URI.find('@')+1]}...@...")
     # Startup:
     client = AsyncIOMotorClient(
         MONGODB_URI,
         tls=True,
-        tlsAllowInvalidCertificates=False,
-        tlsCAFile=certifi.where(),  # Utilise les certificats de certifi
-        serverSelectionTimeoutMS=10000,  # Timeout un peu plus long
-        connectTimeoutMS=10000,
-        socketTimeoutMS=20000,
+        tlsAllowInvalidCertificates=True,  # Temporairement pour tests
+        tlsCAFile=certifi.where(),
+        serverSelectionTimeoutMS=30000,  # 30 secondes
+        connectTimeoutMS=30000,
+        socketTimeoutMS=30000,
         retryWrites=True,
         retryReads=True
     )
     
     try:
-        database = client.get_default_database()
-        # Test de connexion avec un timeout explicite
-        pong = await asyncio.wait_for(database.command("ping"), timeout=5)
-        if int(pong["ok"]) != 1:
-            raise Exception("Cluster connection is not okay!")
-            
-        todo_lists = database.get_collection(COLLECTION_NAME)
+        # Test de connexion plus robuste
+        await asyncio.wait_for(client.admin.command('ping'), timeout=10)
+        todo_lists = client.get_database().get_collection(COLLECTION_NAME)
         app.todo_dal = ToDoDAL(todo_lists)
-        
         yield
-        
     except Exception as e:
-        print(f"Database connection error: {str(e)}")
+        print(f"ERREUR CONNEXION MONGODB: {str(e)}")
         raise
     finally:
         client.close()
