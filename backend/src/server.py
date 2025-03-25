@@ -54,7 +54,9 @@ app = FastAPI(lifespan=lifespan, debug=DEBUG)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://farm-api.vercel.app"
+    ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH"],
     allow_headers=["*"],
