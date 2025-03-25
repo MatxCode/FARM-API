@@ -54,15 +54,10 @@ app = FastAPI(lifespan=lifespan, debug=DEBUG)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",  # Dev local
-        "https://votre-frontend.vercel.app",  # Votre frontend en prod
-        "https://farm-api-production.up.railway.app"  # Autorise aussi le backend lui-même
-    ],
+    allow_origins=["*"],  # Pour le dev, remplacez par vos URLs en prod
     allow_credentials=True,
-    allow_methods=["*"],  # Ou spécifiez ["GET", "POST", "PUT", "DELETE"]
+    allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["*"]  # Important pour certains cas
 )
 
 

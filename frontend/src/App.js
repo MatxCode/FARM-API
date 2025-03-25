@@ -13,9 +13,24 @@ function App() {
   }, []);
 
   async function reloadData() {
-    const response = await axios.get("https://farm-api-production.up.railway.app/api/lists");
-    const data = await response.data;
-    setListSummaries(data);
+    try {
+      console.log("Tentative de chargement des données...");
+      const response = await axios.get("https://farm-api-production.up.railway.app/api/lists", {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log("Réponse reçue:", response.data);
+      setListSummaries(response.data);
+    } catch (error) {
+      console.error("Erreur API:", {
+        message: error.message,
+        response: error.response?.data,
+        stack: error.stack
+      });
+      setListSummaries([]); // Met un tableau vide en cas d'erreur
+    }
   }
 
   function handleNewToDoList(newName) {
